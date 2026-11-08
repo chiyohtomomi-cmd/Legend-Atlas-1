@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#1f8a63"><meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png">
+<title>{{BRAND_NAME}}</title>
+<style>/*__CSS__*/</style></head><body>
+<section id="home" class="screen"><div class="scroll">
+ <div class="hero"><div class="brand" id="brand">{{BRAND_SHORT}}</div><div class="tag">{{BRAND_TAGLINE}}</div></div>
+ <div id="cont"></div>
+ <h2>Stories</h2><div class="grid" id="stories"></div>
+ <p style="color:var(--mut);font-size:12px;margin-top:26px" id="ver">v4.0</p>
+</div></section>
+
+<section id="story" class="screen hid">
+ <div class="bar"><button class="ic" id="sBack" aria-label="Back"></button><div class="ttl" id="sTitle"></div><button class="ic" id="sMenu" aria-label="More"></button></div>
+ <div class="scroll"><div id="sHero"></div>
+  <div class="tabs"><button data-k="pages" class="on">Pages</button><button data-k="stickers">Stickers</button></div>
+  <div class="pgrid" id="sGrid"></div></div>
+</section>
+
+<section id="editor" class="screen hid">
+ <div class="bar" id="eBar">
+  <button class="ic" id="eBack" aria-label="Back"></button><button class="ic land" id="ePrev" aria-label="Previous page">‹</button><div class="land pgn" id="ePgN"></div><button class="ic land" id="eNext" aria-label="Next page">›</button>
+  <div class="ttl" id="eTitle"></div>
+  <button class="ic" id="eUndo" aria-label="Undo"></button><button class="ic" id="eRedo" aria-label="Redo"></button>
+  <button class="ic" id="ePlay" aria-label="Sparkle preview"></button><button class="ic" id="eMenu" aria-label="Menu"></button>
+ </div>
+ <div id="stage"><div id="wrap">
+   <canvas id="cv"></canvas><img id="ln" alt=""><canvas id="gc"></canvas><canvas id="fx"></canvas><canvas id="gh"></canvas><div id="sel" class="hid"></div><div id="hit"></div>
+ </div></div>
+ <div id="cbar" class="card hid"><p id="cmsg"></p><div class="row" id="cbtn"></div></div>
+ <div id="capcard" class="card hid"></div>
+ <div id="tray">
+  <button class="tool on" data-t="fill"></button><button class="tool" data-t="brush"></button><button class="tool" data-t="sparkle"></button><button class="tool" data-t="erase"></button>
+  <button id="well" aria-label="Colors"></button>
+ </div>
+</section>
+
+<div id="sheet" class="hid"><div class="scrim"></div><div class="panel"></div></div>
+<div id="toast"></div>
+<div id="busy" class="hid"><div class="card"><div id="busyT">Working…</div><div class="bar2"><i id="busyB"></i></div></div></div>
+<div id="ov" class="hid"></div>
+<script>/*__BOOK__*/</script>
+<script>/*__JS__*/</script>
+</body></html>
