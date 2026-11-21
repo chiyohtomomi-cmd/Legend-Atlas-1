@@ -114,7 +114,7 @@ input[type=text]{width:100%;padding:12px;border-radius:12px;background:var(--bg)
  <div class="hero"><div class="brand" id="brand">Khmer Legends</div><div class="tag">We are more than just coloring books</div></div>
  <div id="cont"></div>
  <h2>Stories</h2><div class="grid" id="stories"></div>
- <p style="color:var(--mut);font-size:12px;margin-top:26px" id="ver">v6.2 · story 01 + wood patterns</p>
+ <p style="color:var(--mut);font-size:12px;margin-top:26px" id="ver">v6.3 · wood grain patterns</p>
 </div></section>
 
 <section id="story" class="screen hid">
@@ -273,19 +273,21 @@ function kSpiral(g,cx,cy,r0,dir,w,turns){turns=turns||1.4;const N=56;let px=null
  for(let i=0;i<=N;i++){const t=i/N,ang=dir*(t*turns*TAU2),r=r0*(1-.84*t),x=cx+Math.cos(ang)*r,y=cy+Math.sin(ang)*r;
   if(i){g.lineWidth=w*(1-.62*t);g.beginPath();g.moveTo(px,py);g.lineTo(x,y);g.stroke()}px=x;py=y}
  g.beginPath();g.arc(px,py,w*.5,0,TAU2);g.fill()}
-function woodTile(g,s,a,b,vert){g.save();if(vert){g.translate(s,0);g.rotate(Math.PI/2)}
- g.fillStyle=b;g.fillRect(0,0,s,s);const N=4,h=s/N;g.lineCap="round";
- for(let i=0;i<N;i++){const y0=i*h;
-  g.strokeStyle=a;g.globalAlpha=.4;g.lineWidth=s*.011;
-  for(let k=1;k<=3;k++){g.beginPath();for(let j=0;j<=40;j++){const x=j/40*s,y=y0+h*(k/4)+Math.sin(x/s*TAU2*(1+(i+k)%2)+i*1.7+k)*h*.07;if(j)g.lineTo(x,y);else g.moveTo(x,y)}g.stroke()}
-  if(i%2===0){const kx=s*(.28+.4*((i*37)%10)/10),ky=y0+h*.5;g.lineWidth=s*.01;for(let r=1;r<=3;r++){g.beginPath();g.ellipse(kx,ky,s*.02*r*1.6,h*.07*r,0,0,TAU2);g.stroke()}}
-  g.globalAlpha=1;g.fillStyle=a;g.fillRect(0,y0,s,Math.max(1,s*.022));
-  const jx=((i*.37+.12)%1)*s;g.fillRect(jx,y0,Math.max(1,s*.018),h);
-  g.globalAlpha=.9;for(const x of[jx-s*.045,jx+s*.045]){const xx=(x+s)%s;g.beginPath();g.arc(xx,y0+h*.5,s*.011,0,TAU2);g.fill()}g.globalAlpha=1}
- g.restore()}
+function woodGrain(g,s,a,b,o){const m=mk(s,s),mx=m.getContext("2d"),im=mx.createImageData(s,s),d=im.data,e=.5/s,P=TAU2;
+ const F=(u,v)=>{let f=o.kx*u+o.ky*v+o.A[0]*Math.sin(P*v+1.3)+o.A[1]*Math.sin(P*(2*v+u)+.4)+o.A[2]*Math.sin(P*(u+3*v)+2.1);
+  for(const[cx,cy,sx,sy,H]of o.k){const dx=((u-cx+.5)%1+1)%1-.5,dy=((v-cy+.5)%1+1)%1-.5;f+=H*Math.exp(-(dx*dx/(sx*sx)+dy*dy/(sy*sy))/2)}return f};
+ const hw=Math.max(.55,s*(o.w||.008));
+ for(let y=0;y<s;y++)for(let x=0;x<s;x++){const u=(x+.5)/s,v=(y+.5)/s,f=F(u,v),fx=(F(u+e,v)-f)/e,fy=(F(u,v+e)-f)/e,gm=Math.max(.05,Math.hypot(fx,fy)/s),fr=f-Math.floor(f),fd=Math.min(fr,1-fr),dist=fd/gm,al=fd>.05?0:Math.max(0,Math.min(1,hw+.5-dist));
+  const k=(y*s+x)*4;d[k+3]=Math.round(al*255)}
+ mx.putImageData(im,0,0);const q=mk(s,s),qg=q.getContext("2d");qg.fillStyle=a;qg.fillRect(0,0,s,s);qg.globalCompositeOperation="destination-in";qg.drawImage(m,0,0);
+ g.fillStyle=b;g.fillRect(0,0,s,s);g.drawImage(q,0,0)}
+const WOOD_A={kx:8,ky:0,A:[.28,.16,.08],w:.0042,k:[[.3,.7,.05,.12,5],[.75,.28,.045,.1,4]]},
+ WOOD_B={kx:11,ky:0,A:[.18,.1,.06],w:.0038,k:[[.14,.3,.025,.075,3.2],[.47,.72,.03,.09,3.8],[.82,.38,.025,.075,3.2]]},
+ WOOD_C={kx:6,ky:1,A:[.55,.3,.18],w:.0042,k:[]};
 const BLD=[
- {n:"Wood Planks",g:"b",sz:60,f:(g,s,a,b)=>woodTile(g,s,a,b,0)},
- {n:"Wood Wall",g:"b",sz:60,f:(g,s,a,b)=>woodTile(g,s,a,b,1)},
+ {n:"Wood Grain",g:"b",sz:200,f:(g,s,a,b)=>woodGrain(g,s,a,b,WOOD_A)},
+ {n:"Wood Knots",g:"b",sz:200,f:(g,s,a,b)=>woodGrain(g,s,a,b,WOOD_B)},
+ {n:"Wood Flow",g:"b",sz:200,f:(g,s,a,b)=>woodGrain(g,s,a,b,WOOD_C)},
  {n:"Kbach Scroll",g:"b",sz:64,f:(g,s,a,b)=>{g.fillStyle=b;g.fillRect(0,0,s,s);g.strokeStyle=a;g.fillStyle=a;g.lineCap="round";const w=s*.068;
   g.lineWidth=s*.04;g.beginPath();g.moveTo(s/2,0);g.lineTo(s/2,s);g.stroke();
   for(const[y,k]of[[.5,1],[0,.7],[1,.7]]){g.save();g.translate(s/2,s*y);for(const r of[-.75,.75]){g.save();g.rotate(r);g.fillStyle=a;kPetal(g,s*.19*k,s*.058*k);g.restore()}g.fillStyle=a;kPetal(g,s*.26*k,s*.075*k);g.fillStyle=b;g.save();g.translate(0,-s*.045*k);kPetal(g,s*.13*k,s*.026*k);g.restore();g.fillStyle=a;g.beginPath();g.ellipse(0,s*.006,s*.08*k,s*.024*k,0,0,TAU2);g.fill();g.restore()}
