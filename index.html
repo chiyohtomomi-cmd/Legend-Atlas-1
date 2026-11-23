@@ -114,7 +114,7 @@ input[type=text]{width:100%;padding:12px;border-radius:12px;background:var(--bg)
  <div class="hero"><div class="brand" id="brand">Khmer Legends</div><div class="tag">We are more than just coloring books</div></div>
  <div id="cont"></div>
  <h2>Stories</h2><div class="grid" id="stories"></div>
- <p style="color:var(--mut);font-size:12px;margin-top:26px" id="ver">v6.9 · cover color idea</p>
+ <p style="color:var(--mut);font-size:12px;margin-top:26px" id="ver">v6.10 · auto-update notice</p>
 </div></section>
 
 <section id="story" class="screen hid">
@@ -1003,6 +1003,9 @@ async function init(){
  try{await dbPut("m","selftest",new Uint8Array([1,2,3]).buffer);const v=await dbGet("m","selftest");S.storageOk=!!(v&&v.byteLength===3)}catch(e){S.storageOk=false}
  try{await loadMotifs()}catch(e){console.error(e)}
  await renderHome();syncWell();
+ {let shown=0;const showUpdate=()=>{if(shown)return;shown=1;const b=h("button",{style:"position:fixed;left:12px;right:12px;top:calc(10px + env(safe-area-inset-top));z-index:9999;padding:14px 16px;border-radius:16px;background:#1f8f66;color:#fff;font-weight:700;font-size:15px;box-shadow:0 6px 24px rgba(0,0,0,.35)",onclick:()=>location.replace(location.pathname+"?v="+Date.now())},"✨ A new version is ready. Tap here to update");document.body.append(b)};
+  const checkUpdate=async()=>{try{if(!/^https?:/.test(location.protocol)||shown)return;const r=await fetch(location.pathname+"?c="+Date.now(),{cache:"no-store"}),t=await r.text(),m=t.match(/id="ver">([^<]*)</),cur=($("#ver")||{}).textContent;if(m&&cur&&m[1].trim()!==cur.trim())showUpdate()}catch(e){}};
+  setTimeout(checkUpdate,2500);document.addEventListener("visibilitychange",()=>{if(!document.hidden)checkUpdate()})}
  if("serviceWorker" in navigator&&/^https?:/.test(location.protocol)&&!window.BOOK)navigator.serviceWorker.register("sw.js").catch(()=>{})}
 init()})();
 </script>
