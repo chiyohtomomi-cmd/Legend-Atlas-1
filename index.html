@@ -114,7 +114,7 @@ input[type=text]{width:100%;padding:12px;border-radius:12px;background:var(--bg)
  <div class="hero"><div class="brand" id="brand">Khmer Legends</div><div class="tag">We are more than just coloring books</div></div>
  <div id="cont"></div>
  <h2>Stories</h2><div class="grid" id="stories"></div>
- <p style="color:var(--mut);font-size:12px;margin-top:26px" id="ver">v6.15 · new voice</p>
+ <p style="color:var(--mut);font-size:12px;margin-top:26px" id="ver">v6.16 · clip captions fixed</p>
 </div></section>
 
 <section id="story" class="screen hid">
@@ -955,10 +955,8 @@ async function makeStoryClip(st){if(!canRec()){toast("Clips are not supported in
  let acx=null,dest=null;try{acx=new(window.AudioContext||window.webkitAudioContext)();acx.resume();dest=acx.createMediaStreamDestination()}catch(e){acx=null}
  const lite=/iPhone|iPod/.test(navigator.userAgent)||Math.min(screen.width,screen.height)<500,K=lite?.75:1,MW=720,MH=1280,PW=660,PX=30,PY=72,PD=lite?5:5.6,OV=.6,T0=3.4,TE=3.4,ez=x=>x*x*(3-2*x),D=Array(N).fill(PD),St=[],VB={};let endAt=0,total=0;
  const prs={},pages={},ths=[];
- const mkCap=pg=>{const w=MW,c=mk(w,300),x=c.getContext("2d"),en=pg.en||"",kh=pg.kh||"";let fs=30,el=[],kl=[];
-  for(;fs>=20;fs-=2){el=wrapD(en,`600 ${fs}px system-ui`,w-90);kl=wrapD(kh,`${fs-2}px ${KF}`,w-90);if(el.length<=3&&kl.length<=3)break}
-  const lh=Math.round(fs*1.34);x.textBaseline="top";x.shadowColor="rgba(0,0,0,.6)";x.shadowBlur=8;let y=0;x.font=`600 ${fs}px system-ui`;x.fillStyle="#fff6e0";
-  el.forEach(l=>{x.fillText(l,(w-dw(l,x.font))/2,y);y+=lh});y+=12;x.font=`${fs-2}px ${KF}`;x.fillStyle="#f3d98f";kl.forEach(l=>{x.fillText(l,(w-dw(l,x.font))/2,y);y+=lh});return c};
+ const mkCap=pg=>{const w=MW,en=pg.en||"",kh=pg.kh||"",fs=24,lh=Math.round(fs*1.34),fe=`600 ${fs}px system-ui`,fk=`${fs-2}px ${KF}`,el=wrapD(en,fe,w-90),kl=kh?wrapD(kh,fk,w-90):[],n=Math.max(1,Math.ceil(el.length/3),Math.ceil(kl.length/3)),sp=(a,n)=>{const o=[];for(let i=0;i<n;i++)o.push(a.slice(Math.round(i*a.length/n),Math.round((i+1)*a.length/n)));return o},E=sp(el,n),Kk=sp(kl,n),tot=el.join("").length||1,out=[];let cum=0;
+  for(let i=0;i<n;i++){const c=mk(w,300),x=c.getContext("2d");x.textBaseline="top";x.shadowColor="rgba(0,0,0,.6)";x.shadowBlur=8;let y=0;x.font=fe;x.fillStyle="#fff6e0";E[i].forEach(l=>{x.fillText(l,(w-dw(l,fe))/2,y);y+=lh});y+=10;x.font=fk;x.fillStyle="#f3d98f";Kk[i].forEach(l=>{x.fillText(l,(w-dw(l,fk))/2,y);y+=lh});cum+=E[i].join("").length;out.push({c,end:i==n-1?1:cum/tot})}return out};
  const ensure=i=>prs[i]||(prs[i]=(async()=>{const L=await layersOf(st,"pages",st.pages[i]),P=prepPage(L,PW,i);P.dur=D[i];P.cap=mkCap(st.pages[i]);if(VB[i])P.video={el:mkVideo(VB[i])};const th=mk(110,Math.round(110*P.FH/P.FW));th.getContext("2d").drawImage(P.col,0,0,th.width,th.height);ths[i]=th;pages[i]=P;return P})());
  let cover=null;try{if(st.cover)cover=await loadImg(st.cover)}catch(e){}
  try{for(let i=0;i<N;i++){const key=keyOf(st,st.pages[i]);if(!(S.sum[key]||{}).vd)continue;const b=await getVid(key);if(!b)continue;VB[i]=b;const tv=mkVideo(b),d=await vidMeta(tv);dropVideo(tv);D[i]=clamp(isFinite(d)&&d>0?d:PD,3,8)}}catch(e){console.error(e)}
@@ -983,7 +981,7 @@ async function makeStoryClip(st){if(!canRec()){toast("Clips are not supported in
     if(P.video&&!P.vs){P.vs=1;const vv=P.video.el;try{vv.currentTime=0}catch(e){}vv.play().catch(()=>{})}
     if(!(P.video&&drawVid(g,P.video.el,PX,ya,PW,P.FH,al,18)))drawPage(g,P,lt,PX,ya,al);
     const fo=clamp((D[n]-lt)/OV,0,1);g.globalAlpha=al*fo;g.font="600 22px system-ui";g.fillStyle="#bfe0d0";const tt=`${n+1} / ${N}  ·  ${st.pages[n].title}`;g.fillText(tt,(MW-dw(tt,g.font))/2,ya-26);
-    const ca=clamp((lt-1)/.7,0,1)*al*fo;if(ca>0){g.globalAlpha=ca;g.drawImage(P.cap,0,ya+P.FH+34+(1-ca)*16)}g.globalAlpha=1}
+    const ca=clamp((lt-1)/.7,0,1)*al*fo;if(ca>0){const fr=clamp((lt-.5)/Math.max(1,D[n]-2.2),0,.9999),ci=Math.max(0,P.cap.findIndex(q=>fr<q.end)),c0=ci>0?P.cap[ci-1].end:0,c1=P.cap[ci].end,ph=(fr-c0)*(D[n]-2.2),cf=Math.min(1,ph/.35,Math.max(0,(c1-fr)*(D[n]-2.2))/.35+.0);g.globalAlpha=ca*(P.cap.length>1?Math.min(1,Math.max(.15,ph/.35)):1);g.drawImage(P.cap[ci].c,0,ya+P.FH+34+(1-ca)*16)}g.globalAlpha=1}
    else if(lt>=D[n]&&pages[n]){if(pages[n].video)dropVideo(pages[n].video.el);pages[n].dispose();delete pages[n]}}
   if(t>endAt-OV)finale(t-(endAt-OV),clamp((t-(endAt-OV))/OV,0,1))};
  let stopM=null;try{if(acx)stopM=makeMusic(acx,dest,total+1,hasNar?.2:.6);const r=await record(m,fn,total,t=>busy(true,`Making your story clip · ${Math.round(t)} / ${Math.round(total)} s. Keep this screen on and in front. Do not lock the phone.`,100*t/total),acx?dest.stream.getAudioTracks()[0]:null,acx,{bps:lite?3000000:4500000});busy(false);showResult(r.blob,"khmer-legends-"+slug(st.title)+"-story"+(r.mime.includes("mp4")?".mp4":".webm"),"video");if(r.early)setTimeout(()=>toast(`The recorder stopped early, at ${Math.round(r.at)} of ${Math.round(r.dur)} seconds, so this clip is not the full story. On iPhone, a locked screen stops the recording. Keep the screen on and in front, or set Settings > Display & Brightness > Auto-Lock to Never while you make the clip, then try again.`,14000),600)}catch(e){console.error(e);busy(false);toast("Could not make the clip on this device")}
